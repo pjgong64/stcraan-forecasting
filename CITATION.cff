@@ -12,7 +12,7 @@ type: software
 license: MIT
 version: 1.0.0
 date-released: "2026-09-16"
-repository-code: "REPLACE_WITH_REPOSITORY_URL"
+repository-code: "https://github.com/pjgong64/stcraan-forecasting"
 doi: "REPLACE_WITH_ZENODO_CONCEPT_DOI"
 keywords:
   - agricultural credit risk

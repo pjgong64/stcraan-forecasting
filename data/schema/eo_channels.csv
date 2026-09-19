@@ -1,0 +1,12 @@
+channel,column_prefix,source,product,band_or_variable,derived,retained_in_main_pipeline,note
+NDVI,norm_NDVI,MODIS/Terra surface reflectance,MOD09GA V061,sur_refl_b01 / b02,no,yes,Normalised difference vegetation index
+NDWI,norm_NDWI,MODIS/Terra surface reflectance,MOD09GA V061,sur_refl_b02 / b06,no,yes,Normalised difference water index (Gao 1996)
+LST,norm_LST,MODIS/Terra land surface temperature,MOD11A1 V061,LST_Day_1km,no,yes,Daytime land surface temperature
+Precipitation,norm_Precipitation,CHIRPS,CHIRPS v2.0 daily,precipitation,no,yes,Monthly accumulated rainfall
+SMAP,norm_SMAP,SMAP Level-4 Global,SPL4SMGP v7,sm_surface,no,yes,Surface soil moisture
+NTL,norm_log_NTL,VIIRS Black Marble,VNP46A1,DNB_At_Sensor_Radiance_500m,no,yes,Nighttime radiance; log-transformed before scaling
+VHI,norm_VHI,derived,-,from NDVI and LST,yes,yes,Vegetation health index after Kogan (1995)
+CRD,norm_Rainfall_Deficit,derived,-,from Precipitation,yes,yes,Cumulative rainfall departure. NB high value means MORE rain
+HSD,norm_Heat_Stress_Days,derived,-,from LST,yes,yes,Count of days above a fixed physiological cut-point
+SAI_NDVI,norm_SAI_NDVI,derived,-,from NDVI,yes,no,Sub-district standardised anomaly; screened out by the seasonal-aggregate test
+SAI_NDWI,norm_SAI_NDWI,derived,-,from NDWI,yes,no,Sub-district standardised anomaly; screened out by the seasonal-aggregate test

@@ -1,0 +1,15 @@
+quantity,value
+borrower_year_observations,4490163
+adm3_year_cells,18647
+distinct_adm3,6236
+years,3
+default_rate_overall,0.078182
+mean_cell_size,240.8
+median_cell_size,197
+min_cell_size,1
+max_cell_size,1528
+cells_lt_10_borrowers,1878
+effective_cluster_size_n0,240.79
+intracluster_correlation_icc,0.0517
+design_effect,13.41
+effective_sample_size,334910

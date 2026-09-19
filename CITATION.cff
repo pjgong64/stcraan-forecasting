@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "ST-CRAAN: code for a nationwide out-of-time test of Earth observation for agricultural default forecasting"
+abstract: >-
+  Analysis code for a factorial of five model families across eight feature sets,
+  fitted on a nationwide panel of Thai rice-cultivating borrowers and evaluated
+  on a withheld crop season. Includes the branch-health diagnostics and
+  modality-neutralisation tests used to detect silent modality collapse in a
+  dual-branch forecaster, and the leave-one-out oracle that bounds any predictor
+  whose environmental input is resolved to the sub-district.
+type: software
+license: MIT
+version: 1.0.0
+date-released: "2026-09-16"
+repository-code: "REPLACE_WITH_REPOSITORY_URL"
+doi: "REPLACE_WITH_ZENODO_CONCEPT_DOI"
+keywords:
+  - agricultural credit risk
+  - default forecasting
+  - Earth observation
+  - multimodal fusion
+  - modality collapse
+  - out-of-time validation
+  - spatial aggregation
+authors:
+  - family-names: Jungsatidkul
+    given-names: Phataraphol
+    affiliation: "University of the Thai Chamber of Commerce"
+  - family-names: Innate
+    given-names: Supachate
+    affiliation: "University of the Thai Chamber of Commerce"
+preferred-citation:
+  type: article
+  title: "Silent Modality Collapse and the Measurement of Fusion Gains: A Nationwide Out-of-Time Test of Earth Observation for Agricultural Default Forecasting"
+  authors:
+    - family-names: Jungsatidkul
+      given-names: Phataraphol
+    - family-names: Innate
+      given-names: Supachate
+  journal: "Forecasting"
+  year: 2026
+  notes: "Manuscript submitted for publication."

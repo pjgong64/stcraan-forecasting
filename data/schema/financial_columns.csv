@@ -1,0 +1,49 @@
+column,block,kind,transform,formula,partition_vs_ADM3,r_pb_with_default,gloss
+Has_Credit_History,FIN,indicator,none,,,0.0914537133832953,Borrower has a prior credit record with the lender
+IDRV_4,FIN,indicator,none,,,0.0381426934992286,Dummy: primary rice variety is non-fragrant white rice (code 4)
+IDRV_5,FIN,indicator,none,,,0.0115587886307838,Dummy: primary rice variety is glutinous rice (code 5)
+MH_cos,FIN,cyclical,sin/cos of the month on a 12-month circle,,,-0.0368819873398638,"Harvest month, cosine term of the cyclical encoding"
+MH_sin,FIN,cyclical,sin/cos of the month on a 12-month circle,,,-0.021863789817625,"Harvest month, sine term of the cyclical encoding"
+MP_cos,FIN,cyclical,sin/cos of the month on a 12-month circle,,,0.0122261591526852,"Planting month, cosine term of the cyclical encoding"
+MP_sin,FIN,cyclical,sin/cos of the month on a 12-month circle,,,-0.0209933854531095,"Planting month, sine term of the cyclical encoding"
+Previous_Default,FIN,indicator,none,,,0.298171383985286,Borrower defaulted in an earlier crop year
+TE_IDDT,FIN,target encoding,"mean of the outcome within the level, additive Bayesian smoothing; fitted on years 1-2 only",,not geographic,0.0291471909798834,Target encoding of the land-rights document type: legal class conferring cultivation rights (64 levels)
+norm_CD,FIN,count,"global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.054838526008713,"Cultivation days, planting to harvest"
+norm_log_Area,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0494689038454155,"Total area actively cultivated with rice (rai; 1 rai = 1,600 m2)"
+norm_log_AreaR,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0385539826191916,Total land area on the legal-rights document (rai)
+norm_log_CL,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0119065096064191,Approved credit limit at the end of the observation year (THB)
+norm_log_CLb,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0350861105127759,Approved credit limit at the start of the observation year (THB)
+norm_log_Debt_per_Rai,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",Out / Area,,0.0458876458976044,Debt-to-land: debt intensity against the primary productive asset
+norm_log_Dep,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.224882154903703,Deposit balance at year-end (THB)
+norm_log_Depb,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.211326112391479,Deposit balance at the beginning of the reference year (THB)
+norm_log_Int,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.364065146641342,Annual contractual interest rate (percent)
+norm_log_Out,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0343495798647551,"Outstanding principal at year-end, excluding accrued interest (THB)"
+norm_log_Outb,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0536078775372206,Outstanding principal at the beginning of the observation year (THB)
+norm_log_eCost,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0313235815163413,Estimated total cultivation cost across all plots (THB)
+norm_log_eCostrai,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0748765689098323,"Estimated cultivation cost per rai: seed, fertiliser, pesticide, labour, machinery (THB/rai)"
+norm_log_eInc,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0278511452854275,Estimated gross revenue from rice; the primary cash-inflow indicator (THB)
+norm_log_ePrcton,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0161723734346792,Estimated farm-gate price per tonne (THB/tonne)
+norm_log_eYie,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0316816927071009,Estimated total rice production aggregated across all plots (kg)
+norm_log_eYierai,FIN,monetary or area,"log1p, then global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.0488297007855158,Estimated rice production per rai of cultivated area (tonnes/rai)
+norm_nIS,FIN,count,"global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0387172726970792,Number of declared income sources; >1 indicates diversification beyond rice
+norm_nLC,FIN,count,"global min-max to [0,1] estimated on years 1-2, 4 dp",,,0.118723887557621,Number of active loan contracts in the observation year
+norm_nP,FIN,count,"global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0501217511703351,Number of distinct rice-planting plots
+norm_nRV,FIN,count,"global min-max to [0,1] estimated on years 1-2, 4 dp",,,-0.0302286864253032,Number of distinct rice varieties cultivated
+norm_win_Area_Utilization_Rate,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Area / AreaR,,-0.0104992161176693,Land utilisation rate: cultivated area against registered landholding
+norm_win_Bes,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(eInc - eCost - Int * Out) / eInc,,-0.0619253170101104,Break-even sensitivity: operating margin after production cost and debt service
+norm_win_Credit_Utilization_Rate,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Out / CL,,0.0935717656256145,Credit utilisation rate
+norm_win_Debt_Momentum,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(Out(t) - Out(t-1)) / Out(t-1),,0.0138977682672272,Relative rate of debt accumulation; positive signals rollover or distress
+norm_win_Debt_Reduction,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Outb(t-1) - Out(t),,0.0257992934977208,Absolute principal cleared since the previous opening balance
+norm_win_Debt_to_Income,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Out / eInc,,0.062177331968987,"Debt-to-income ratio. Denominator is the recorded estimated-income field, against the reconstructed revenue used by Proxy_DSR"
+norm_win_Est_DSCR10,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(eInc - eCost) / (0.10 * Out),,-0.0411292505790388,Estimated debt service coverage under a 10 percent principal-repayment assumption
+norm_win_Est_DSCR20,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(eInc - eCost) / (0.20 * Out),,-0.0411292506335235,Estimated debt service coverage under a 20 percent principal-repayment assumption
+norm_win_Liquidity_Buffer,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(CL - Out) / CL,,-0.0909943748100336,Share of the credit line still unused; near zero means an exhausted line
+norm_win_Profitability_Buffer,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(eInc - eCost) / eInc,,0.026640629599921,Estimated net agricultural margin
+norm_win_Proxy_DSR,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Out / ((eYie / 1000) * ePrcton),,0.0511253334644557,"Proxy debt service ratio. Denominator is revenue reconstructed as yield x price, not the recorded eInc field -- this is what distinguishes it from Debt_to_Income"
+norm_win_Repayment_Rate,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(Outb - Out) / Outb,,0.0471923561294864,Principal repayment rate: share of the opening balance amortised
+norm_win_Saving_Growth,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",Dep(t) - Dep(t-1),,-0.0243451703814795,Absolute change in deposit balance since the previous period
+norm_win_Saving_Momentum,FIN,ratio,"winsorised at the 1st and 99th percentiles of years 1-2, then global min-max to [0,1], 4 dp",(Dep(t) - Dep(t-1)) / Dep(t-1),,0.0236082474017927,Relative rate of reserve accumulation
+TE_ADM3,SPA,target encoding,"mean of the outcome within the level, additive Bayesian smoothing; fitted on years 1-2 only",,equal to ADM3,0.175620505181032,Target encoding of the sub-district (ADM3) of the primary cultivation plot
+TE_ADM3RL,SP,target encoding,"mean of the outcome within the level, additive Bayesian smoothing; fitted on years 1-2 only",,strict refinement of ADM3,0.183683940894206,Target encoding of cultivation sub-district x residential sub-district
+TE_IDProv_RL,SP,target encoding,"mean of the outcome within the level, additive Bayesian smoothing; fitted on years 1-2 only",,crosscuts ADM3,0.103794006610448,Target encoding of cultivation province x residential location
+TE_IDProv_rice,SPA,target encoding,"mean of the outcome within the level, additive Bayesian smoothing; fitted on years 1-2 only",,coarser than ADM3,0.102524330017259,Target encoding of the province of the primary cultivation plot

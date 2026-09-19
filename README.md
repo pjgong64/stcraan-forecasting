@@ -31,7 +31,7 @@ reading before concluding that something is missing by accident.
 ## Quick start
 
 ```bash
-git clone REPLACE_WITH_REPOSITORY_URL && cd stcraan-forecasting
+git clone https://github.com/pjgong64/stcraan-forecasting && cd stcraan-forecasting
 
 cd data/synthetic && Rscript make_synthetic.R && cd ../..   # ~1 min
 SYNTH=1 Rscript R/ceiling/11_Level_diagnostics.r            # cluster structure

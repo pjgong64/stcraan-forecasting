@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+#  First commit. Nothing is added before this file is.
+#
+#  git history is permanent: a restricted file committed once and deleted in the
+#  next commit is still in the repository, still clonable, and still on GitHub.
+#  Recovering from that means deleting the repository and starting again. So
+#  the exclusions below are deliberately broader than the files that exist.
+# ---------------------------------------------------------------------------
+
+# --- restricted: borrower records and anything derived from them at cell level
+*_ADM3_Year.csv
+cluster_summary*
+data_hybrid2*
+dataset_for_modeling*
+3_geo3y*
+te_*.csv
+TE_*.csv
+*_predict.txt
+metric_compare/
+production_models/
+
+# --- fitted model weights: trained on 1.5M individual credit histories
+*.h5
+*.keras
+*.hdf5
+*.model
+*.pkl
+*Keras*Model/
+HBDL2*
+
+# --- generated synthetic panel: too large for git, rebuild with make_synthetic.R
+data/synthetic/panel_synthetic*.txt
+
+# --- credentials and private cloud assets
+*.json.key
+service-account*.json
+.Renviron
+.env
+
+# --- R and Python working files
+.Rhistory
+.RData
+.Rproj.user/
+.Rproj
+renv/library/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# --- OS
+Thumbs.db
+.DS_Store
+desktop.ini

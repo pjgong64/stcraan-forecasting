@@ -1,44 +1,3 @@
-# Putting this on GitHub and getting a DOI
-
-## สรุปขั้นตอนแบบสั้น (ภาษาไทย)
-
-ทำตามลำดับ ข้ามไม่ได้สองขั้น — ขั้น 3a กับขั้น 5 แก้ย้อนหลังไม่ได้
-
-| # | ทำอะไร | ใช้เวลา |
-|---|---|---|
-| 1 | แตกซิปลง**โฟลเดอร์ใหม่เปล่า ๆ** ห้ามมีไฟล์ข้อมูลจริงปนอยู่ | 1 นาที |
-| 2 | สร้าง repo บน github.com ชื่อ `stcraan-forecasting` ตั้งเป็น **Public** และ **อย่าติ๊ก** ทั้งสามช่อง (Add README / Add .gitignore / Choose a license) | 2 นาที |
-| 3a | อัป **`.gitignore` ไฟล์เดียวก่อน** แล้ว commit — Windows ซ่อนไฟล์ที่ขึ้นต้นด้วยจุด ต้องเปิด `View → Show → Hidden items` ก่อนถึงจะลากได้ | 2 นาที |
-| 3b | อัปที่เหลือทั้งหมด **ลากเป็นโฟลเดอร์** ไม่ใช่ลากไฟล์ข้างใน | 5 นาที |
-| 3c | เปิด repo เช็คว่า `R/` มี 7 โฟลเดอร์ย่อย · `gee/` มี 12 ไฟล์ · และ**ไม่มี** `panel_synthetic.txt`, `cluster_summary_ADM3_Year.csv`, `.h5` | 2 นาที |
-| 4 | แก้ `README.md` บน GitHub แทนที่ `REPLACE_WITH_REPOSITORY_URL` ทั้งสองจุดด้วย URL จริง | 2 นาที |
-| 5 | **เปิดสวิตช์ Zenodo ก่อนสร้าง release** — zenodo.org → ล็อกอิน**ด้วย GitHub** → เมนู GitHub → หา repo → สับสวิตช์เป็น On | 3 นาที |
-| 6 | สร้าง release tag `v1.0.0` คำอธิบายคัดจาก `CHANGELOG.md` → Zenodo จะออก DOI ให้ในไม่กี่นาที | 5 นาที |
-| 7 | เอา **concept DOI** (อันใต้ "Cite all versions") ไปใส่ 4 ที่: `CITATION.cff` · DAS ในต้นฉบับ · cover letter · ช่อง data availability ในระบบ submission | 10 นาที |
-| 8 | ขอหนังสือ/อีเมลจาก BAAC ยินยอมให้เผยแพร่ใต้ MIT **ลงวันที่ก่อน** repo เป็น public | — |
-
-### สองกับดัก
-
-**ขั้น 3a — git history ลบไม่ออก** ถ้าเผลออัปไฟล์ต้องห้ามขึ้นไปแม้แต่ครั้งเดียว
-ต่อให้ลบใน commit ถัดไป มันก็ยังอยู่ใน repo และยัง clone ได้ ทางแก้มีทางเดียวคือ
-ลบ repo ทิ้งแล้วเริ่มใหม่ `.gitignore` กันไฟล์พวกนี้ไว้หมดแล้ว แต่จะกันได้ก็ต่อเมื่อ
-มันขึ้นไปเป็น commit แรก
-
-**ขั้น 5 — Zenodo เก็บเฉพาะ release ที่เกิดหลังเปิดสวิตช์** สร้าง release ก่อนแล้วค่อย
-เปิดสวิตช์ = ไม่ได้ DOI และย้อนไปเก็บให้ไม่ได้ ต้องสร้าง release ใหม่อีกรอบ
-
-### ใช้ concept DOI ไม่ใช่ version DOI
-
-Zenodo ให้มาสองเลข concept DOI ชี้ไปที่เวอร์ชันล่าสุดเสมอ ส่วน version DOI ตรึงอยู่ที่
-v1.0.0 ตลอดไป ถ้าต้องออก v1.0.1 ตอนแก้ revision ลิงก์ในเปเปอร์ที่เป็น concept DOI
-จะยังใช้ได้ แต่ version DOI จะชี้ไปที่ของเก่า
-
----
-
-*The full version follows in English.*
-
----
-
 Follow the order. Step 5 in particular cannot be fixed afterwards.
 
 ---
@@ -154,7 +113,7 @@ clean up afterwards.
 
 ## 4. Copy the repository URL into the README
 
-Edit `README.md` on GitHub (pencil icon), replace both occurrences of
+Edit `README.md` on GitHub (pencil icon), replace occurrences of
 `REPLACE_WITH_REPOSITORY_URL` with the actual URL, commit.
 
 ---

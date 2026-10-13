@@ -57,3 +57,19 @@ Every file here is written by the scripts in `R/`; the traceability table in the
 README maps each published number to the script that produces it. The pipeline runs end to
 end on the synthetic panel in `data/synthetic/`, which reproduces the cluster structure of
 the real panel but contains no real records.
+
+## revision/ — results added in revision round 1
+
+All aggregates. The 2022 season is only scored.
+
+| File | Contents | Paper |
+|---|---|---|
+| `r1_areal_ceiling.csv` | Exact areal bound (0.677215, reported 0.67721), the leave-one-out statistic (0.66223), cell count and the share of defaulter/non-defaulter pairs inside a cell. | §4.10, Note S1 |
+| `r2_recall_alert_volumes_published.csv` | Recall and missed defaulters at alert volumes of 10, 20 and 30% for all forty forecasters of the published run. | Tables 3, S5 |
+| `boot_refit1_cells.csv`, `boot_refit1_contrasts.csv` | Sub-district-clustered bootstrap (2,000 resamples of the 6,217 sub-districts of 2022): AUC intervals per cell, paired intervals per EO contrast. | §4.14 |
+| `r5_all_runs_long.csv`, `r5_contrast_by_run.csv`, `r5_auc_by_cell_over_runs.csv` | Test AUC of every run (published, same-seed refit, seeds 101–404) and the EO contrasts per run. | §4.14 |
+| `seedci_tabular_*.csv`, `seedci_neural_*.csv`, `table9.csv` | Intervals that pool bootstrap draws over refits; `table9.csv` is Table 9 of the paper. | Table 9 |
+| `rolling_2020_to_2021_results.csv` | Every family fitted on 2020 and scored on 2021. | §4.15, Table 10 |
+| `grouped_val_oof_results.csv` | The factorial with borrower-grouped early stopping and out-of-fold encodings. | §4.16, Table S6 |
+| `r1_ablation_sim.csv` | Configuration A: ten ablation fits and six planted-signal fits, with kernel magnitudes, hidden-state SD, dead units, fusion ratio, test AUC with and without EO, mean \|Δ logit\| and recall at 20%. | §4.6.1–4.6.2, Tables S7–S8 |
+| `configB_diag.csv` | The same diagnostics for three Configuration B cells of the factorial. | Table S9 |

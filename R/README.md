@@ -43,7 +43,7 @@ Run order, and what each script is for.
 | File | Purpose |
 |---|---|
 | `12_Factorial7_config.R` | The only file to edit. Feature blocks, the eight arms, the five families, every hyper-parameter. Carries `CFG$config_version` so a stale copy is detectable. |
-| `12_Factorial7_run.R` | 5 families x 8 feature sets. Finished cells are skipped, so it resumes after a stop. |
+| `12_Factorial7_run.R` | 5 families x 8 feature sets. Finished cells are skipped, so it resumes after a stop. Since v1.1.0, `seed=<n>` refits under another seed into `factorial7_out/repeat_seed<n>/`, and `arms=<a,b,...>` restricts the grid; without them it behaves as before. |
 | `12_Factorial7_partition.R` | Settles by measurement whether each target encoding is coarser than, equal to, finer than, or crosscutting with respect to the ADM3 partition. This is what makes `SPA` a defined object rather than an assumption, and therefore what makes the falsification test a test. |
 | `12_Factorial7_report.R` | Reads the results file and prints the paper's tables. Reads only; safe to run in a second terminal while the grid is going. |
 
@@ -51,7 +51,7 @@ Run order, and what each script is for.
 
 | File | Purpose |
 |---|---|
-| `11_Level_diagnostics.r` | Intracluster correlation, design effect, effective sample size, and the leave-one-out oracle bound on (ADM3, Year). The self-inclusion correction is worth 0.015 of AUC and is not optional. |
+| `11_Level_diagnostics.r` | Intracluster correlation, design effect, effective sample size, and the exact bound on (ADM3, Year): every 2022 borrower scored by the realised rate of their own cell, ties counted ½ (0.67721). It also prints the leave-one-out statistic (0.66223), which v1.0.0 reported as the bound and which understates it. |
 
 ## evaluation/
 
@@ -68,3 +68,10 @@ Earth Engine JavaScript. See `gee/README.md`.
 | File | Why it is here |
 |---|---|
 | `10_Factorial_EO.r` | The earlier four-family factorial, replaced by `factorial/`. Kept for provenance. It fixes an alert rate of 0.2535 and a class weight of 100/6.575, both tied to an operating point the manuscript no longer uses. Do not read its constants as current. |
+
+## revision/ — analyses added in revision round 1
+
+Grouped validation with out-of-fold encodings, the rolling-origin check, the
+ablation and planted-signal simulation, and the branch-health diagnostics of the
+factorial's ST-CRAAN. See `revision/README.md`, which also covers the Python
+post-processing in `python/revision/`.

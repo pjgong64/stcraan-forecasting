@@ -63,6 +63,61 @@ for (.f in c("xgb", "lr", "rf", "mlp", "stcraan"))
          " cell would fail with a NULL hyper-parameter.")
 set.seed(CFG$seed)
 
+# ---- Study 2 / H2a: the class-weight sweep ----------------------------------
+# alpha=<r>   sets the positive-to-negative weight ratio explicitly and sends
+#             every output -- results, log, cache and saved scores -- to its own
+#             sub-directory, so a sweep cannot disturb the factorial. With no
+#             alpha= on the command line nothing changes: class_w() falls back to
+#             N0/N1, the ratio it has always used, and writes where it always has.
+# arms=<a,b>  restricts the arm grid, so a sweep can be run on one feature set
+#             rather than the whole factorial. Seven values of alpha across five
+#             families and every arm is a great deal of GPU time for a question
+#             that one feature set answers.
+.argv <- commandArgs(trailingOnly = TRUE)
+
+ALPHA_RATIO <- NA_real_
+.a <- grep("^alpha=", .argv, value = TRUE)
+if (length(.a)) {
+  ALPHA_RATIO <- suppressWarnings(as.numeric(sub("^alpha=", "", .a[1])))
+  if (!is.finite(ALPHA_RATIO) || ALPHA_RATIO <= 0)
+    stop("alpha= needs a positive number, got: ", .a[1])
+  CFG$out_dir <- file.path(
+    CFG$out_dir,
+    paste0("alpha_", gsub("[.]", "p", format(ALPHA_RATIO, trim = TRUE,
+                                             scientific = FALSE))))
+  cat(sprintf("alpha sweep: positive/negative weight ratio %.4f\n  output -> %s\n",
+              ALPHA_RATIO, CFG$out_dir))
+}
+
+# seed=<n>    refits under a different seed and sends the run to its own
+#             sub-directory, so a set of repeats can be collected side by side.
+#             This is how the repeat-fit variability of Section 4 is measured:
+#             the published run is one draw, and the spread across draws is what
+#             says whether a small difference in AUC means anything. Note that
+#             the spread is NOT only seed variation -- h2o DRF across threads,
+#             xgboost's hist tie-breaking and GPU training are not bitwise
+#             reproducible even at a fixed seed, and a repeat samples all of it.
+.s <- grep("^seed=", .argv, value = TRUE)
+if (length(.s)) {
+  .sv <- suppressWarnings(as.integer(sub("^seed=", "", .s[1])))
+  if (is.na(.sv)) stop("seed= needs an integer, got: ", .s[1])
+  CFG$seed <- .sv
+  CFG$out_dir <- file.path(CFG$out_dir, paste0("repeat_seed", .sv))
+  set.seed(CFG$seed)
+  cat(sprintf("repeat fit: seed %d\n  output -> %s\n", .sv, CFG$out_dir))
+}
+
+SEL_ARMS <- NULL
+.m <- grep("^arms=", .argv, value = TRUE)
+if (length(.m)) {
+  SEL_ARMS <- trimws(strsplit(sub("^arms=", "", .m[1]), ",")[[1]])
+  .bad <- setdiff(SEL_ARMS, names(CFG$arms))
+  if (length(.bad))
+    stop("unknown arm: ", paste(.bad, collapse = ", "),
+         "\n  known arms: ", paste(names(CFG$arms), collapse = ", "))
+  cat("arms this run: ", paste(SEL_ARMS, collapse = ", "), "\n", sep = "")
+}
+
 dir.create(CFG$out_dir, showWarnings = FALSE, recursive = TRUE)
 RES_FILE <- file.path(CFG$out_dir, "factorial7_results.csv")
 .n_feat_now <- NA_integer_        # set per cell, recorded with the result
@@ -163,7 +218,8 @@ say <- function(...) {
 args_in <- commandArgs(trailingOnly = TRUE)
 # "auto" / "-y" / "--auto" anywhere on the command line disables the prompt.
 flags        <- tolower(args_in) %in%
-                c("auto", "-y", "--auto", "redo", "--redo", "-r")
+                c("auto", "-y", "--auto", "redo", "--redo", "-r") |
+                grepl("^(alpha|arms|seed)=", args_in)
 sel_families <- args_in[!flags]
 if (!length(sel_families)) sel_families <- CFG$families
 bad <- setdiff(sel_families, CFG$families)
@@ -632,6 +688,22 @@ say("dev %s rows (%.2f%% default) | test %s rows (%.2f%% default)",
     format(length(idx_dev), big.mark = ","), 100 * mean(y_dev),
     format(length(idx_tst), big.mark = ","), 100 * mean(y_tst))
 
+# ---- per-borrower test scores, kept for the significance tests --------------
+# Every cell computes fit$tst, takes AUC and the alert metrics from it, and then
+# drops it. A difference between two AUCs has no standard error unless both
+# score vectors still exist, so each one is written to CFG$out_dir/pred/ and
+# assembled later by assemble_test_scores.R. The keys go out once here, in the
+# same row order the scores use (idx_tst), so the two line up without a join.
+# The test set is never subsampled, so this order is stable across cells.
+PRED_DIR <- file.path(CFG$out_dir, "pred")
+dir.create(PRED_DIR, showWarnings = FALSE, recursive = TRUE)
+saveRDS(data.table(y    = as.integer(y_tst),
+                   adm3 = dt[[CFG$col_adm3]][idx_tst],
+                   id   = dt[[CFG$col_id]][idx_tst]),
+        file.path(PRED_DIR, "keys_test.rds"))
+say("prediction keys -> %s (%s rows)",
+    file.path(PRED_DIR, "keys_test.rds"), format(length(idx_tst), big.mark = ","))
+
 # ---- one fit/val split, shared by every family ------------------------------
 # Early stopping needs held-out data. Using the training set for it (which an
 # earlier draft did for xgboost) never triggers, because training AUC only
@@ -652,11 +724,42 @@ say("fit %s | val %s | test %s",
     format(length(idx_val), big.mark = ","),
     format(length(idx_tst), big.mark = ","))
 
-# class reweighting, identical in every family: w = N / (2 * N_class)
+# ---- development keys, for the Study 2 calibration grid ---------------------
+# in_val marks the 15% no model was fitted on. Platt and isotonic recalibration
+# are fitted on those rows only: fitted on idx_fit they would learn the model's
+# in-sample over-confidence and then apply that correction to 2022, which makes
+# the calibration worse rather than better. Early stopping did watch these rows,
+# so they are not perfectly clean either, but the optimism there comes from a
+# stopping rule rather than from a fitted label.
+saveRDS(data.table(y      = as.integer(y_all[idx_dev]),
+                   adm3   = dt[[CFG$col_adm3]][idx_dev],
+                   id     = dt[[CFG$col_id]][idx_dev],
+                   in_val = idx_dev %in% idx_val),
+        file.path(PRED_DIR, "keys_dev.rds"))
+say("development keys -> %s (%s rows, %s held out)",
+    file.path(PRED_DIR, "keys_dev.rds"),
+    format(length(idx_dev), big.mark = ","),
+    format(length(idx_val), big.mark = ","))
+
+# Class reweighting, identical in every family.
+#
+# Only the RATIO w1/w0 moves the decision boundary. The scale is fixed so that
+# mean(w) == 1 whatever the ratio, because for the neural families a larger mean
+# weight is also a larger effective step size, and without this a sweep over the
+# ratio would confound "heavier positives" with "faster training" -- the curve
+# would then be partly a learning-rate curve and would not mean what it appears
+# to mean.
+#
+# At the default ratio N0/N1 this returns exactly what it always did:
+#   r = N0/N1  ->  w0 = 1/(2*p0) = N/(2*N0),  w1 = 1/(2*p1) = N/(2*N1)
+# so a run without alpha= reproduces the factorial bit for bit.
 class_w <- function(y) {
-  w1 <- length(y) / (2 * max(1, sum(y == 1)))
-  w0 <- length(y) / (2 * max(1, sum(y == 0)))
-  ifelse(y == 1, w1, w0)
+  n  <- length(y)
+  n1 <- max(1, sum(y == 1)); n0 <- max(1, sum(y == 0))
+  r  <- if (is.na(ALPHA_RATIO)) n0 / n1 else ALPHA_RATIO
+  p1 <- n1 / n; p0 <- n0 / n
+  w0 <- 1 / (p1 * r + p0)
+  ifelse(y == 1, r * w0, w0)
 }
 
 # =============================================================================
@@ -861,7 +964,9 @@ fit_xgb <- function(cols) {
   suppressPackageStartupMessages(library(xgboost))
   d_fit <- xgb.DMatrix(as.matrix(dt[idx_fit, ..cols]), label = y_fit)
   d_val <- xgb.DMatrix(as.matrix(dt[idx_val, ..cols]), label = y_val)
-  spw <- sum(y_fit == 0) / max(1, sum(y_fit == 1))
+  # scale_pos_weight IS the ratio, so it takes ALPHA_RATIO unchanged; the
+  # default below is the same N0/N1 the factorial used.
+  spw <- if (is.na(ALPHA_RATIO)) sum(y_fit == 0) / max(1, sum(y_fit == 1)) else ALPHA_RATIO
   hp  <- CFG$hp$xgb
   prm <- list(objective = "binary:logistic", eval_metric = "auc",
               eta = hp$eta, max_depth = hp$max_depth, subsample = hp$subsample,
@@ -1153,6 +1258,7 @@ stopped <- FALSE
 total_cells <- sum(vapply(sel_families, function(f) {
   a <- names(CFG$arms)
   if (f == "STCRAAN") a <- intersect(a, CFG$stcraan_arms)
+  if (!is.null(SEL_ARMS)) a <- intersect(a, SEL_ARMS)
   sum(!paste(f, a, sep = "|") %in% done)
 }, integer(1)))
 say("%d cell(s) to run this session%s", total_cells,
@@ -1168,6 +1274,7 @@ for (fam in sel_families) {
   done <- if (REDO) character(0) else done_cells()
   arms <- names(CFG$arms)
   if (fam == "STCRAAN") arms <- intersect(arms, CFG$stcraan_arms)
+  if (!is.null(SEL_ARMS)) arms <- intersect(arms, SEL_ARMS)
 
   for (arm in arms) {
     if (stopped) break
@@ -1250,6 +1357,25 @@ for (fam in sel_families) {
     record(fam, arm, fast_auc(fit$dev, y_dev, "dev"), auc_t,
            eval_at_alerts(fit$tst, y_tst, CFG$alert_rates),
            secs, note = if (!is.null(fit$note)) fit$note else "")
+
+    # Keep this cell's test scores. See the note beside keys_test.rds above.
+    # The arm name is sanitised because it contains "+", which has no business
+    # in a filename: F+SP+EO becomes F_SP_EO, and that is the form the contrast
+    # table in auc_significance_tests.R expects.
+    pred_file <- file.path(PRED_DIR,
+                           sprintf("pred_%s__%s.rds", fam,
+                                   gsub("[^A-Za-z0-9]", "_", arm)))
+    saveRDS(as.numeric(fit$tst), pred_file)
+    say("  scores -> %s", basename(pred_file))
+
+    # The development scores go out too, for the Study 2 calibration grid: the
+    # recalibration maps are fitted on the held-out development rows and then
+    # applied to 2022, so both vectors have to survive the run.
+    dev_file <- file.path(PRED_DIR,
+                          sprintf("dev_%s__%s.rds", fam,
+                                  gsub("[^A-Za-z0-9]", "_", arm)))
+    saveRDS(as.numeric(fit$dev), dev_file)
+    say("  dev scores -> %s", basename(dev_file))
     rm(fit); gc()
 
     cells_done_now <- cells_done_now + 1L

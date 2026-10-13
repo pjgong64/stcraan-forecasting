@@ -7,8 +7,8 @@ crop seasons.
 
 > **Paper.** Jungsatidkul, P.; Innate, S. *Silent Modality Collapse and the
 > Measurement of Fusion Gains: A Nationwide Out-of-Time Test of Earth
-> Observation for Agricultural Default Forecasting.* Manuscript submitted to
-> *Forecasting*, 2026.
+> Observation for Agricultural Default Forecasting.* Manuscript under revision
+> (round 1) at *Forecasting*, 2026.
 
 ## What is here
 
@@ -19,6 +19,8 @@ without them.
 
 ```
 R/            analysis code, by stage            see R/README.md
+R/revision/   analyses added for the reviewers   see R/revision/README.md
+python/       post-processing of saved scores    see R/revision/README.md
 gee/          Earth Engine extraction            see gee/README.md
 data/         schema and synthetic generator     see data/README.md
 output/       published results and diagnostics  see output/README.md
@@ -27,6 +29,30 @@ bat/          Windows launchers
 
 `output/EXCLUDED.md` lists what was deliberately withheld, and why. It is worth
 reading before concluding that something is missing by accident.
+
+## Revision round 1 (v1.1.0)
+
+The reviewers asked for uncertainty intervals, a second year boundary, a
+borrower-grouped validation split, out-of-fold target encodings, an ablation of
+the branch revival, a test of the diagnostics on a known signal, and an exact
+derivation of the areal bound. Every one of those analyses is in this release:
+
+| Request | Script | Result file | Paper |
+|---|---|---|---|
+| Exact areal bound (ties counted ½) | `python/revision/r1_areal_ceiling.py`, `R/ceiling/11_Level_diagnostics.r` | `output/revision/r1_areal_ceiling.csv` | §4.10, Note S1 |
+| Sub-district-clustered bootstrap | `python/revision/r3_cluster_bootstrap.py` | `output/revision/boot_refit1_*.csv` | §4.14 |
+| Refits under further seeds | `R/factorial/12_Factorial7_run.R seed=<n>` | `output/revision/r5_*.csv` | §4.14 |
+| Intervals that pool seeds and bootstrap | `python/revision/r4_seed_pooled_ci.py` | `output/revision/seedci_*.csv`, `table9.csv` | Table 9 |
+| Recall at 10% and 30% alert volume | `R/factorial/12_Factorial7_run.R` | `output/revision/r2_recall_alert_volumes_published.csv` | Table S5 |
+| Rolling origin, fit 2020 → score 2021 | `R/revision/12_Factorial7_run_rolling.R` | `output/revision/rolling_2020_to_2021_results.csv` | §4.15, Table 10 |
+| Borrower-grouped split, out-of-fold encodings | `R/revision/12_Factorial7_run_grouped.R` | `output/revision/grouped_val_oof_results.csv` | §4.16, Table S6 |
+| Ablation of the revival; diagnostics on a planted signal | `R/revision/13_R1_ablation_sim.R` | `output/revision/r1_ablation_sim.csv` | §4.6.1–4.6.2, Tables S7–S8 |
+| Branch health of the factorial's ST-CRAAN | `R/revision/12_Factorial7_run_diag.R` | `output/revision/configB_diag.csv` | Table S9 |
+
+None of them uses the 2022 season to fit, tune or select anything. Two results
+changed what the paper says, and `CHANGELOG.md` states both: the bound is 0.67721,
+not the leave-one-out 0.66223; and the collapse is gradient starvation, which
+weight decay completes rather than causes.
 
 ## Quick start
 
@@ -49,7 +75,7 @@ Every number in the manuscript comes from a file here.
 
 | Claim | Value | Produced by | Published in |
 |---|---|---|---|
-| Neutralising the environmental tensor in the fitted model | ΔAUC = 0.00000 | `R/collapse/8_Diagnose_dead_branch.r` | — |
+| Neutralising the environmental tensor in the fitted model (Configuration A, inherited) | ΔAUC = 0.00000 | `R/collapse/8_Diagnose_dead_branch.r` | — |
 | Recurrent input kernel against unregularised matrices | ≈ 7×10⁻⁸ of initialisation | `R/collapse/8_Diagnose_dead_branch.r` | `note` column of `factorial7_results.csv` |
 | Per-channel attribution of the collapsed model | AUC drop ~1e-7 | `R/collapse/RiskCalendar.r` | `output/diagnostics/risk_calendar_collapsed/` |
 | Month-permutation control | same order as the unpermuted attribution | `R/collapse/sequence.r` | same directory |
@@ -57,10 +83,17 @@ Every number in the manuscript comes from a file here.
 | Neutralisation against refitting disagree in sign | +0.80 pp vs −0.50 pp recall | `R/collapse/MoAblation_StaticOnlyV2.r` | — |
 | Intracluster correlation of default | 0.0517 | `R/ceiling/11_Level_diagnostics.r` | `output/results/cluster_structure_summary.csv` |
 | Design effect, effective sample size | 13.41, 334,910 | same | same |
-| Leave-one-out areal bound on (ADM3, Year) | 0.66223 | same | — |
-| Self-inclusion bias in the naive bound | 0.01499 (0.67721 naive) | same | — |
+| Exact areal bound on (ADM3, Year), ties counted ½ | 0.67721 | same; `python/revision/r1_areal_ceiling.py` | `output/revision/r1_areal_ceiling.csv` |
+| Leave-one-out statistic (reported in v1.0.0; understates the bound) | 0.66223 | same | same |
 | Best cell in the factorial | XGB, F+SP, 0.90730 | `R/factorial/12_Factorial7_run.R` | `output/results/factorial7_results.csv` |
-| EO added to financial and spatial covariates | loses AUC in 4 of 5 families | same | same |
+| EO added to financial and spatial covariates, one fit | loses AUC in 4 of 5 families | same | same |
+| Same contrast over refits | negative in every fit of LR, RF, XGBoost; MLP +0.0026 (SD 0.0059), ST-CRAAN −0.0017 (SD 0.0042) over six fits | `R/factorial/12_Factorial7_run.R seed=`, `python/revision/r4_seed_pooled_ci.py` | `output/revision/table9.csv` |
+| Paired standard error of an AUC difference, sub-district bootstrap | 0.0001–0.0004 | `python/revision/r3_cluster_bootstrap.py` | `output/revision/boot_refit1_contrasts.csv` |
+| Rolling origin 2020 → 2021: EO-only AUC | 0.520–0.541 | `R/revision/12_Factorial7_run_rolling.R` | `output/revision/rolling_2020_to_2021_results.csv` |
+| Grouped split + out-of-fold encodings: development AUC of SPA, LR | 0.691 → 0.671 | `R/revision/12_Factorial7_run_grouped.R` | `output/revision/grouped_val_oof_results.csv` |
+| Removing the input-kernel penalty alone | 62 of 64 units still constant | `R/revision/13_R1_ablation_sim.R` | `output/revision/r1_ablation_sim.csv` |
+| Planted signal, β = 1.5: neutralisation ΔAUC, revived vs inherited | +0.0100 vs +0.0047 | same | same |
+| Factorial ST-CRAAN branch in use, neutralisation ΔAUC | +0.00003, −0.00032, −0.00175 | `R/revision/12_Factorial7_run_diag.R` | `output/revision/configB_diag.csv` |
 | EO added to areal spatial history alone (SPA → EO+SPA) | negative in all 5, −0.00082 to −0.00318 | same | same |
 | Two sub-cell columns added (SPA → SP) | positive in all 5, +0.00705 to +0.00927 | same | same |
 | Falsification test: every EO+SPA cell below the bound | 0.64591–0.64868, spread 0.00277 | same | same |
@@ -111,12 +144,12 @@ need our data.
 each, and which of them could touch a reported number (three, all resolved). The
 headline items:
 
-- **The leave-one-out correction was missing from the repository and has been
-  added.** The bound the paper reports as 0.66223 is a leave-one-out oracle, but
-  `R/ceiling/11_Level_diagnostics.r` computed only the naive self-inclusive
-  version. The correction is now in the script, and running it on the real panel
-  reproduces every published figure exactly — 0.66223 corrected, 0.67721 naive,
-  0.01499 of self-inclusion bias. See `AUDIT.md` A1.
+- **The areal bound is 0.67721, not 0.66223 (changed in v1.1.0).** v1.0.0
+  treated the self-inclusive cell-rate ranking as inflated and reported the
+  leave-one-out statistic. Reviewer 2 showed the reverse: a score constant
+  within a cell, with within-cell ties counted ½, is the exact bound, and the
+  leave-one-out score understates it. `R/ceiling/11_Level_diagnostics.r` now
+  labels the two figures accordingly. See `AUDIT.md` A1 and `CHANGELOG.md`.
 - **`R/model/5_HB_DLprec.r` reshapes the environmental tensor without a column
   permutation.** `array_reshape(x, c(n, 8, 9))` is C-order while the columns are
   laid out channel-major, so in the original network the LSTM's time axis was an

@@ -6,14 +6,16 @@ abstract: >-
   fitted on a nationwide panel of Thai rice-cultivating borrowers and evaluated
   on a withheld crop season. Includes the branch-health diagnostics and
   modality-neutralisation tests used to detect silent modality collapse in a
-  dual-branch forecaster, and the leave-one-out oracle that bounds any predictor
-  whose environmental input is resolved to the sub-district.
+  dual-branch forecaster, the exact bound on any predictor whose environmental
+  input is resolved to the sub-district, and the analyses added in revision
+  round 1 (refits, clustered bootstrap, rolling origin, grouped validation,
+  ablation and planted-signal tests of the diagnostics).
 type: software
 license: MIT
-version: 1.0.0
-date-released: "2026-09-16"
+version: 1.1.0
+date-released: "2026-10-13"
 repository-code: "https://github.com/pjgong64/stcraan-forecasting"
-doi: "REPLACE_WITH_ZENODO_CONCEPT_DOI"
+doi: "10.5281/zenodo.22842039"
 keywords:
   - agricultural credit risk
   - default forecasting

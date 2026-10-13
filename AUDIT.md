@@ -196,3 +196,16 @@ describes as broken.
 It is a record that the code was read. The manuscript argues that a fused model
 reporting a gain nobody has tested is not evidence of anything. The same applies
 to the code that produced it.
+
+
+---
+
+## Revision round 1 (v1.1.0): A1 revisited
+
+A1 above records the leave-one-out correction as a fix. It was not. Reviewer 2
+of the *Forecasting* submission pointed out that the leave-one-out score is not
+constant within a cell, so it is not the bound on a predictor that is. The
+self-inclusive cell-rate ranking, with within-cell ties counted ½ as `pROC`
+counts them, is the exact bound: 0.67721 on this panel. The script computed it
+all along under the label "naive"; v1.1.0 relabels the two figures and the paper
+now reports 0.67721. No other finding in this audit is affected.

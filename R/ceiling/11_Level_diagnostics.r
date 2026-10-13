@@ -66,21 +66,23 @@ dt <- merge(dt, cl[, .(ADM3, Year, cell_rate = p)], by = c("ADM3","Year"), all.x
 te <- dt[Year == 3]
 auc_oracle_same <- as.numeric(auc(roc(te$Y_num, te$cell_rate, direction = "<", quiet = TRUE)))
 
-## --- Leave-one-out correction. This is the number the paper reports. ---------
-## The rate above is computed from a cell that CONTAINS the borrower being
-## scored, so a defaulter raises the rate of the very cell it is then ranked by.
-## That is self-fulfilling and inflates the bound. Score each borrower against
-## their own cell with themselves removed:
+## --- Which number is the bound (revised in v1.1.0) -------------------------
+## auc_oracle_same scores every 2022 borrower by the realised default rate of
+## their own (ADM3, Year) cell. That score is constant within a cell, so every
+## within-cell pair is a tie and pROC counts it 1/2. Ordering cells by their
+## realised rate maximises the between-cell term, so this is the EXACT upper
+## bound for any predictor that is constant within a cell (Note S1, Eq. S9):
+## 0.677215 on the panel, reported as 0.67721.
+##
+## v1.0.0 called this "naive" and reported the leave-one-out statistic below
+## (0.66223) as the bound. Reviewer 2 of the Forecasting submission showed that
+## the leave-one-out score is NOT constant within a cell: it places each
+## defaulter below the non-defaulters of its own cell, and below those of
+## neighbouring cells with nearly equal rates, so it understates the bound.
+## It is kept here only so the two figures can be compared.
 ##
 ##     loo_rate(i) = (k_c - y_i) / (n_c - 1)
 ##
-## Singleton cells have nothing left once the borrower is removed, so they get
-## the overall default rate -- the best a lender could say about a borrower
-## whose cell carries no other information.
-##
-## The gap between the two is the self-inclusion bias, and it is not small.
-## Report the corrected figure; keep the naive one only to show the size of the
-## correction.
 te <- merge(te, cl[, .(ADM3, Year, cell_n = n, cell_k = k)],
             by = c("ADM3", "Year"), all.x = TRUE)
 te[, loo_rate := fifelse(cell_n > 1L, (cell_k - Y_num) / (cell_n - 1L), grand)]
@@ -93,9 +95,9 @@ te2[is.na(hist), hist := grand]
 auc_oracle_hist <- as.numeric(auc(roc(te2$Y_num, te2$hist, direction = "<", quiet = TRUE)))
 
 cat("\n================ 1.3 ceiling of an area-level predictor ================\n")
-cat(sprintf("Leave-one-out oracle on (ADM3, Year), 2022      %.5f   <- THE CEILING. this is the number the paper reports\n", auc_oracle_loo))
-cat(sprintf("Naive oracle, borrower included in own cell     %.5f   <- inflated, do not report\n", auc_oracle_same))
-cat(sprintf("Self-inclusion bias                             %.5f   <- the cost of getting this wrong\n", auc_oracle_same - auc_oracle_loo))
+cat(sprintf("Exact bound: realised cell rate, ties = 1/2     %.5f   <- THE CEILING reported in the paper (v1.1.0)\n", auc_oracle_same))
+cat(sprintf("Leave-one-out statistic (v1.0.0 / submitted)    %.5f   <- understates the bound\n", auc_oracle_loo))
+cat(sprintf("Difference                                      %.5f\n", auc_oracle_same - auc_oracle_loo))
 cat(sprintf("Singleton cells given the overall rate          %d\n", te[cell_n == 1L, .N]))
 cat(sprintf("AUC from the year 1-2 rates (attainable)         %.5f   <- what TE_ADM3 actually does\n", auc_oracle_hist))
 cat(sprintf("\nCf.:   EO-only as measured  Dev 0.643  Test 0.512\n"))

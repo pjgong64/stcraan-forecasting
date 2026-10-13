@@ -1,0 +1,9 @@
+quantity,value
+borrowers,1496721.0
+defaulters,180556.0
+cells (ADM3) in 2022,6217.0
+singleton cells,153.0
+"EXACT ceiling, realised cell rate, ties = 1/2 (Eq. S9)",0.677214890034588
+LOO statistic of submitted Note S1 (Eq. S10),0.6622338790719944
+difference LOO - exact,-0.014981010962593633
+share of D/ND pairs inside a cell,0.0002676934722341088

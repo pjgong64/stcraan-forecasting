@@ -1,0 +1,2 @@
+family,arm,auc_dev,auc_test,n_dev,n_test,n_feat,dev_fraction,secs,note,stamp,recall_a10,recall_a20,recall_a30,fn_a10,fn_a20,fn_a30
+STCRAAN,F+SP+EO,0.923683965407246,0.88113615583704,1496721,1496721,136,1,2038.4,kernelL2=2.74 recurL2=2.3,2026-10-14 21:54:36,0.536089904689649,0.761420645834321,0.862316847645692,48917,25157,14518

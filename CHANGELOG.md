@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.1.1 — empty cells filled; the rolling-origin ST-CRAAN gain examined
+
+- MLP and ST-CRAAN fitted on the EO-only and SP-only arms of the grouped
+  refit (Table S6) and of the rolling-origin check (Table 10), which v1.1.0 left
+  empty. On its own, EO stays at chance on 2022 (0.489 and 0.511) and reaches
+  0.515 and 0.528 on 2021, no better than logistic regression on flattened
+  columns (0.542).
+- The single-fit gain of ST-CRAAN from EO on the rolling split (+0.0254 on
+  FIN + SP) does not survive refitting. Over that fit and seeds 101, 202 and 303
+  the change is +0.0254, −0.0075, +0.0204 and +0.0055. With the architecture held
+  fixed, neutralising EO in a refitted two-branch model lowers 2021 AUC by
+  0.0002. The gain belongs to the change from one branch to two, not to EO.
+- Added `R/revision/12_Factorial7_run_rolling_diag.R` and `bat/run_fill_all.bat`.
+- Conclusions unchanged.
+
 ## v1.1.0 — revision round 1 (October 2026)
 
 Code and results added to answer the reviewers of the *Forecasting* submission

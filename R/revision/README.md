@@ -12,6 +12,7 @@ select anything.** It is only scored.
 | `12_Factorial7_run_grouped.R` | M3(c), M5 | Two corrections together: the development-year target encodings are computed **out of fold** over five borrower folds, and the 15% early-stopping portion is drawn **by borrower**, so no borrower sits on both sides (224,507 borrowers held out). The 2022 encodings are rebuilt and asserted identical to the published ones. | `factorial7_out/grouped_val_oof/` | §4.16, Table S6 |
 | `12_Factorial7_run_rolling.R` | M3(a) | Rolling origin: fit on 2020 alone, score 2021. 2022 is not read. Encodings for 2021 come from 2020 outcomes only; the 2020 ones are out of fold. Same grouped split as above. | `factorial7_out/rolling_2020_to_2021/` | §4.15, Table 10 |
 | `13_R1_ablation_sim.R` | M4 | Configuration A (two-layer LSTM). `ablation`: ten fits that add each revival setting alone to the inherited model and remove each one alone from the revived model. `sim`: a known signal is planted in the labels of a 20% borrower subsample, with β ∈ {0, 0.5, 1.5}, and the inherited and revived models are refitted at each β. | `factorial7_out/r1_ablation_sim.csv` | §4.6.1, §4.6.2, Tables S7–S8 |
+| `12_Factorial7_run_rolling_diag.R` | M3(a) (v1.1.1) | The rolling-origin script with the diagnostics and neutralisation of `12_Factorial7_run_diag.R` added. Holds the two-branch architecture fixed, so it separates what EO contributes from what the change from a one-branch to a two-branch network contributes. | `factorial7_out/rolling_2020_to_2021_diag/` | §4.15 |
 | `12_Factorial7_run_diag.R` | M1(d), M4 | After every fused ST-CRAAN fit (Configuration B), it records the branch-health diagnostics (across-borrower SD of the recurrent representation, dead units, fusion weight ratio) and neutralisation (test AUC and mean \|Δ logit\| with the EO tensor replaced by its column means). | `factorial7_out/diag_configB/configB_diag.csv` | §3.4, §4.9.2, §4.10, §4.12, Table S9 |
 
 The repeated fits behind Table 9 do not need a separate script.
@@ -40,8 +41,10 @@ Rscript 12_Factorial7_run.R MLP STCRAAN arms=F,F+EO,F+SP,F+SP+EO,SPA,EO+SPA seed
 Finished cells are skipped, so every script resumes after a stop. On Windows the
 matching launchers are `bat/run_grouped_val.bat`, `bat/run_after_grouped.bat`
 (rolling, then ablation, then simulation), `bat/run_ablation_sim.bat`,
-`bat/run_diag_configB.bat`, `bat/run_repeat_fits.bat` (tabular seeds) and
-`bat/run_repeat_deep.bat` (neural seeds).
+`bat/run_diag_configB.bat`, `bat/run_repeat_fits.bat` (tabular seeds),
+`bat/run_repeat_deep.bat` (neural seeds) and `bat/run_fill_all.bat` (v1.1.1: the
+neural EO-only and SP-only cells of Table 10 and Table S6, the rolling
+neutralisation fit, and three further rolling seeds for ST-CRAAN).
 
 On the study machine (RTX 4060, 8 GB; 32 GB RAM) a neural cell takes 38–45 minutes,
 a fit of `13_R1_ablation_sim.R` 20–45 minutes.

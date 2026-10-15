@@ -30,7 +30,7 @@ bat/          Windows launchers
 `output/EXCLUDED.md` lists what was deliberately withheld, and why. It is worth
 reading before concluding that something is missing by accident.
 
-## Revision round 1 (v1.1.0)
+## Revision round 1 (v1.1.0, v1.1.1)
 
 The reviewers asked for uncertainty intervals, a second year boundary, a
 borrower-grouped validation split, out-of-fold target encodings, an ablation of
@@ -89,7 +89,8 @@ Every number in the manuscript comes from a file here.
 | EO added to financial and spatial covariates, one fit | loses AUC in 4 of 5 families | same | same |
 | Same contrast over refits | negative in every fit of LR, RF, XGBoost; MLP +0.0026 (SD 0.0059), ST-CRAAN −0.0017 (SD 0.0042) over six fits | `R/factorial/12_Factorial7_run.R seed=`, `python/revision/r4_seed_pooled_ci.py` | `output/revision/table9.csv` |
 | Paired standard error of an AUC difference, sub-district bootstrap | 0.0001–0.0004 | `python/revision/r3_cluster_bootstrap.py` | `output/revision/boot_refit1_contrasts.csv` |
-| Rolling origin 2020 → 2021: EO-only AUC | 0.520–0.541 | `R/revision/12_Factorial7_run_rolling.R` | `output/revision/rolling_2020_to_2021_results.csv` |
+| Rolling origin 2020 → 2021: EO-only AUC, five families | 0.515–0.541 | `R/revision/12_Factorial7_run_rolling.R` | `output/revision/rolling_2020_to_2021_results.csv` |
+| Rolling origin: ST-CRAAN gain from EO on FIN + SP, four fits; neutralisation with the architecture fixed | +0.0254, −0.0075, +0.0204, +0.0055; neutralising lowers AUC by 0.0002 | `R/revision/12_Factorial7_run_rolling_diag.R`, `12_Factorial7_run_rolling.R seed=` | `output/revision/rolling_seeds_stcraan_results.csv`, `rolling_diag_*.csv` |
 | Grouped split + out-of-fold encodings: development AUC of SPA, LR | 0.691 → 0.671 | `R/revision/12_Factorial7_run_grouped.R` | `output/revision/grouped_val_oof_results.csv` |
 | Removing the input-kernel penalty alone | 62 of 64 units still constant | `R/revision/13_R1_ablation_sim.R` | `output/revision/r1_ablation_sim.csv` |
 | Planted signal, β = 1.5: neutralisation ΔAUC, revived vs inherited | +0.0100 vs +0.0047 | same | same |

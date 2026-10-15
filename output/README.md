@@ -73,3 +73,7 @@ All aggregates. The 2022 season is only scored.
 | `grouped_val_oof_results.csv` | The factorial with borrower-grouped early stopping and out-of-fold encodings. | §4.16, Table S6 |
 | `r1_ablation_sim.csv` | Configuration A: ten ablation fits and six planted-signal fits, with kernel magnitudes, hidden-state SD, dead units, fusion ratio, test AUC with and without EO, mean \|Δ logit\| and recall at 20%. | §4.6.1–4.6.2, Tables S7–S8 |
 | `configB_diag.csv` | The same diagnostics for three Configuration B cells of the factorial. | Table S9 |
+| `rolling_diag_results.csv`, `rolling_diag_branch_health.csv` | v1.1.1. ST-CRAAN FIN + SP + EO refitted on 2020 and scored on 2021 with the branch-health diagnostics and neutralisation recorded: neutralising EO lowers 2021 AUC by 0.0002. | §4.15 |
+| `rolling_seeds_stcraan_results.csv` | v1.1.1. ST-CRAAN on FIN + SP and FIN + SP + EO, fit on 2020 and scored on 2021, seeds 101, 202 and 303. | §4.15 |
+
+`grouped_val_oof_results.csv` and `rolling_2020_to_2021_results.csv` were updated in v1.1.1 with the MLP and ST-CRAAN cells on the EO-only and SP-only arms, which v1.1.0 left empty.

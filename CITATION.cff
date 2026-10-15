@@ -15,7 +15,7 @@ license: MIT
 version: 1.1.1
 date-released: "2026-10-15"
 repository-code: "https://github.com/pjgong64/stcraan-forecasting"
-doi: "10.5281/zenodo.22842039"
+doi: "10.5281/zenodo.22842038"
 keywords:
   - agricultural credit risk
   - default forecasting
